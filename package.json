@@ -1,0 +1,30 @@
+{
+  "name": "deephouse-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apvilkko/deephouse-generator.git"
+  },
+  "author": "Antti Pekka Vilkko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/apvilkko/deephouse-generator/issues"
+  },
+  "homepage": "https://github.com/apvilkko/deephouse-generator#readme",
+  "devDependencies": {
+    "browser-sync": "^2.10.0",
+    "browserify": "^12.0.1",
+    "gulp": "^3.9.0",
+    "gulp-tslint": "^4.0.0",
+    "superstatic": "^3.0.0",
+    "tsify": "^0.12.2",
+    "tslint": "^3.0.0",
+    "typescript": "^1.6.2",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
