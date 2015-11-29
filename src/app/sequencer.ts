@@ -1,11 +1,5 @@
 import trigger from './event';
-
-const PATTERN = {
-  'HC': [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
-  //'HO': [0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0],
-  'BD': [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
-  'CL': [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-};
+import Pattern from './pattern';
 
 class Sequencer {
   context: any;
@@ -15,11 +9,11 @@ class Sequencer {
   noteLength: number;
   secondsPerBeat: number;
   beatsPerBar: number;
-  notesPerBeat: number;
   playing: boolean;
   pauseRequested: boolean;
   sounds: any;
   pattern: any;
+  shufflePercentage: number;
 
   constructor(context, sounds) {
     this.context = context;
@@ -31,26 +25,42 @@ class Sequencer {
     let tempo = 120;
     this.secondsPerBeat = 60.0 / tempo;
     this.beatsPerBar = 4;
-    this.notesPerBeat = Math.round(this.beatsPerBar / this.noteLength);
-    this.pattern = PATTERN;
     this.playing = false;
     this.pauseRequested = false;
+    this.shufflePercentage = 0;
+    this.createPattern();
 
     document.addEventListener('tempo', (value: CustomEvent) => {
       this.secondsPerBeat = 60.0 / value.detail;
     });
+    document.addEventListener('shufflePercentage', (value: CustomEvent) => {
+      this.shufflePercentage = value.detail;
+    });
     document.addEventListener('playpause', () => {
+      this.playpause();
+    });
+    document.addEventListener('visibilitychange', () => {
       if (this.playing) {
         this.pauseRequested = true;
-      } else {
-        this.start();
       }
-    });
+    }, false);
+  }
+  playpause() {
+    if (this.playing) {
+      this.pauseRequested = true;
+    } else {
+      this.start();
+    }
+  }
+  createPattern() {
+    this.pattern = Pattern.create();
   }
   scheduleNote() {
-    Object.keys(this.pattern).forEach((value) => {
-      if (this.pattern[value][this.currentNote]) {
-        this.sounds[value].gateOn();
+    Object.keys(this.pattern).forEach((key) => {
+      let track = this.pattern[key];
+      let note = track[this.currentNote % track.length];
+      if (note.velocity) {
+        this.sounds[key].gateOn(note);
         /*if (value === 'HC') {
           trigger('HO_AEnvelope_gateOff');
         }*/
@@ -58,9 +68,11 @@ class Sequencer {
     });
   }
   nextNote() {
-    this.nextNoteTime += this.noteLength * this.secondsPerBeat;
+    let shuffleAmount = 1.0 - this.shufflePercentage * 2 / 3.0 / 100.0;
+    let noteLen = ((this.currentNote % 2) ? shuffleAmount : (2.0 - shuffleAmount)) * this.noteLength;
+    this.nextNoteTime += noteLen * this.secondsPerBeat;
     this.currentNote++;
-    if (this.currentNote === this.notesPerBeat) {
+    if (this.currentNote === 256) {
       this.currentNote = 0;
     }
   }

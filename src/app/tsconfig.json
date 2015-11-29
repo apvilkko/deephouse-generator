@@ -26,6 +26,7 @@
         "index.ts",
         "inputhandler.ts",
         "parametermapping.ts",
+        "pattern.ts",
         "sequencer.ts",
         "util.ts"
     ],

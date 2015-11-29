@@ -3,32 +3,36 @@ import Sequencer from './sequencer';
 import {Sample} from './components';
 import {InputHandler} from './inputhandler';
 import trigger from './event';
+import {randRange} from './util';
 
 var SOUNDS = {
   BD: [
-    'MTKickDrum.wav',
-    '808kick1.wav',
-    '909kick1.wav'
+    'bd1', 'bd2', 'bd3', 'bd4'
   ],
   CL: [
-    '808handclap.wav',
-    '909HANDCLP1.WAV',
-    'MTHandClap.wav'
+    'cl1', 'cl2', 'cl3', 'cl4'
   ],
   HC: [
-    '808cl_hihat.wav',
-    '909cl_hihat.wav',
-    'MTHatClosed.wav'
+    'hc1', 'hc2', 'hc3', 'hc4'
+  ],
+  PR: [
+    'pr1', 'pr2', 'pr3', 'pr4'
+  ],
+  BS: [
+    'bass1',
+    'bass2',
+    'bass3'
+  ],
+  PD: [
+    'pad1',
+    'pad2',
+    'pad3',
+    'pad4'
   ]
 };
 
-function randRange(min, max) {
-  return min + Math.floor(Math.random() * (max - min + 1));
-}
-
 function getRandom(key: string) {
   let arr = SOUNDS[key];
-  console.log(arr, randRange(0, arr.length - 1));
   return key + '/' + arr[randRange(0, arr.length - 1)];
 }
 
@@ -49,6 +53,8 @@ class DeepHouseGenerator {
     document.addEventListener('another', () => {
       this.createSounds();
       trigger('tempo', randRange(115, 125));
+      trigger('shufflePercentage', randRange(0,60));
+      this.sequencer.createPattern();
     });
   }
 

@@ -1,11 +1,48 @@
 <!doctype>
 <html>
 <head>
+  <title>Venntaur's Deep House Generator</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: monospace;
+    }
+    body {
+      padding: 2em;
+    }
+    button {
+      padding: 2em;
+      background: #ccccdd;
+      margin-bottom: 1em;
+      font-family: monospace;
+    }
+    #playpause {
+      padding: 0.5em;
+    }
+    .slider label {
+      display: inline-block;
+      line-height: 2em;
+      margin-bottom: 1em;
+    }
+    .slider input {
+      margin-top: 0.5em;
+      margin-left: 1em;
+    }
+    a {
+      display: block;
+      position: fixed;
+      left: 1em;
+      bottom: 1em;
+    }
+  </style>
 </head>
 <body>
+  <h1>Venntaur's Deep House Generator</h1>
   <button id="another">another</button>
   <div id="sliders"></div>
   <button id="playpause">play/pause</button>
   <script src="dist/application.js"></script>
+  <a href="https://github.com/apvilkko/deephouse-generator" target="_blank">source</a>
 </body>
 </html>
