@@ -14,6 +14,8 @@ class Sequencer {
   sounds: any;
   pattern: any;
   shufflePercentage: number;
+  worker: any;
+  autoanother: boolean;
 
   constructor(context, sounds) {
     this.context = context;
@@ -28,7 +30,14 @@ class Sequencer {
     this.playing = false;
     this.pauseRequested = false;
     this.shufflePercentage = 0;
+    this.autoanother = false;
     this.createPattern();
+
+    this.worker = new Worker('dist/worker.js');
+    this.worker.postMessage('start');
+    this.worker.onmessage = () => {
+      this.onTick();
+    };
 
     document.addEventListener('tempo', (value: CustomEvent) => {
       this.secondsPerBeat = 60.0 / value.detail;
@@ -39,11 +48,14 @@ class Sequencer {
     document.addEventListener('playpause', () => {
       this.playpause();
     });
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener('autoanother', (value: CustomEvent) => {
+      this.autoanother = value.detail;
+    });
+    /*document.addEventListener('visibilitychange', () => {
       if (this.playing) {
         this.pauseRequested = true;
       }
-    }, false);
+    }, false);*/
   }
   playpause() {
     if (this.playing) {
@@ -75,14 +87,30 @@ class Sequencer {
     if (this.currentNote === 256) {
       this.currentNote = 0;
     }
+    if (this.autoanother && this.currentNote % 128 === 0) {
+      trigger('another');
+    }
   }
   start () {
     this.playing = true;
     this.nextNoteTime = this.context.currentTime;
     this.scheduler();
   }
+  onTick() {
+    if (this.pauseRequested) {
+      this.playing = false;
+      this.pauseRequested = false;
+      return;
+    }
+    if (this.playing) {
+      if (this.nextNoteTime < this.context.currentTime + this.scheduleAheadTime ) {
+        this.scheduleNote();
+        this.nextNote();
+      }
+    }
+  }
   scheduler() {
-    window.requestAnimationFrame(() => {
+    /*window.requestAnimationFrame(() => {
       if (this.pauseRequested) {
         this.playing = false;
         this.pauseRequested = false;
@@ -93,7 +121,7 @@ class Sequencer {
     if (this.nextNoteTime < this.context.currentTime + this.scheduleAheadTime ) {
       this.scheduleNote();
       this.nextNote();
-    }
+    }*/
   }
 }
 export default Sequencer;

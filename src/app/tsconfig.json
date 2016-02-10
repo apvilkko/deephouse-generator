@@ -28,7 +28,8 @@
         "parametermapping.ts",
         "pattern.ts",
         "sequencer.ts",
-        "util.ts"
+        "util.ts",
+        "worker.ts"
     ],
     "atom": {
         "rewriteTsconfig": true

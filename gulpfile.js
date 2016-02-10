@@ -42,6 +42,11 @@ gulp.task('compile-js', function() {
     .pipe(gulp.dest(config.publicPath));
 });
 
+gulp.task('copyworker', function() {
+  gulp.src(config.app.path + '/worker.js')
+    .pipe(gulp.dest(config.publicPath));
+});
+
 gulp.task('scripts', function() {
     gulp.src(config.app.path + '/' + config.app.main, {read: false})
         .pipe(tap(function(file) {
@@ -78,10 +83,10 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch([config.app.path + '/**/*.ts'], ['ts-lint', 'scripts']);
+    gulp.watch([config.app.path + '/**/*.ts'], ['ts-lint', 'scripts', 'copyworker']);
 });
 
-gulp.task('serve', ['ts-lint', 'scripts', 'watch'], function() {
+gulp.task('serve', ['ts-lint', 'scripts', 'copyworker', 'watch'], function() {
   process.stdout.write('Serving...\n');
   browserSync({
     port: 3000,
@@ -98,4 +103,4 @@ gulp.task('serve', ['ts-lint', 'scripts', 'watch'], function() {
   });
 });
 
-gulp.task('default', ['ts-lint', 'scripts']);
+gulp.task('default', ['ts-lint', 'scripts', 'copyworker']);

@@ -40,5 +40,9 @@ export class InputHandler {
     button.addEventListener('click', () => {
       trigger('another');
     });
+    var autoanother = document.getElementById('autoanother');
+    autoanother.addEventListener('change', (value) => {
+      trigger('autoanother', value.target['checked']);
+    });
   }
 }
