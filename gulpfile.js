@@ -10,9 +10,12 @@ var tap = require('gulp-tap');
 var streamify = require('gulp-streamify');
 var concat = require('gulp-concat');
 var gutil = require('gulp-util');
+var rev = require('gulp-rev');
+var revReplace = require('gulp-rev-replace');
 
 var config = {
   publicPath: __dirname + '/src/dist',
+  revved: __dirname + '/src/dist/dist',
   app: {
     path: __dirname + '/src/app',
     main: 'index.ts',
@@ -46,6 +49,12 @@ gulp.task('copyworker', function() {
   gulp.src(config.app.path + '/worker.js')
     .pipe(gulp.dest(config.publicPath));
 });
+
+gulp.task('copyworker:dist', function() {
+  gulp.src(config.app.path + '/worker.js')
+    .pipe(gulp.dest(config.revved));
+});
+
 
 gulp.task('scripts', function() {
     gulp.src(config.app.path + '/' + config.app.main, {read: false})
@@ -103,4 +112,20 @@ gulp.task('serve', ['ts-lint', 'scripts', 'copyworker', 'watch'], function() {
   });
 });
 
-gulp.task('default', ['ts-lint', 'scripts', 'copyworker']);
+gulp.task('revjs', () => {
+  return gulp.src(config.publicPath + '/' + config.app.result)
+    .pipe(rev())
+    .pipe(gulp.dest(config.revved))
+    .pipe(rev.manifest())
+    .pipe(gulp.dest(config.revved));
+});
+
+gulp.task('copyhtml', () => {
+  gulp.src(config.app.path + '../../index.html')
+    .pipe(revReplace({manifest: gulp.src(config.revved + '/rev-manifest.json')}))
+    .pipe(gulp.dest(config.publicPath));
+});
+
+gulp.task('dist', ['ts-lint', 'scripts', 'copyworker:dist', 'revjs', 'copyhtml']);
+
+gulp.task('default', ['dist']);

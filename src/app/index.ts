@@ -4,36 +4,17 @@ import {Sample} from './components';
 import {InputHandler} from './inputhandler';
 import trigger from './event';
 import {randRange} from './util';
-
-var SOUNDS = {
-  BD: [
-    'bd1', 'bd2', 'bd3', 'bd4'
-  ],
-  CL: [
-    'cl1', 'cl2', 'cl3', 'cl4'
-  ],
-  HC: [
-    'hc1', 'hc2', 'hc3', 'hc4'
-  ],
-  PR: [
-    'pr1', 'pr2', 'pr3', 'pr4'
-  ],
-  BS: [
-    'bass1',
-    'bass2',
-    'bass3'
-  ],
-  PD: [
-    'pad1',
-    'pad2',
-    'pad3',
-    'pad4'
-  ]
-};
+import config from './config';
 
 function getRandom(key: string) {
-  let arr = SOUNDS[key];
+  let arr = config.sounds[key];
   return key + '/' + arr[randRange(0, arr.length - 1)];
+}
+
+function getDelay() {
+  var base = randRange(1, 4) / 4;
+  var shifter = randRange(97, 103) / 100;
+  return base * shifter;
 }
 
 class DeepHouseGenerator {
@@ -52,14 +33,17 @@ class DeepHouseGenerator {
 
     document.addEventListener('another', () => {
       this.createSounds();
-      trigger('tempo', randRange(115, 125));
+      let tempo = randRange(115, 125);
+      trigger('tempo', tempo);
+      trigger('Delay_setTempo', tempo);
+      trigger('Delay_setDelay', getDelay());
       trigger('shufflePercentage', randRange(0,60));
       this.sequencer.createPattern();
     });
   }
 
   createSounds() {
-    Object.keys(SOUNDS).forEach((key) => {
+    config.names.forEach((key) => {
       if (this.sounds[key]) {
         this.audioEngine.deleteTrack(key);
       }

@@ -22,14 +22,15 @@
     "files": [
         "audioengine.ts",
         "components.ts",
+        "config.ts",
         "event.ts",
         "index.ts",
         "inputhandler.ts",
+        "loader.ts",
         "parametermapping.ts",
         "pattern.ts",
         "sequencer.ts",
-        "util.ts",
-        "worker.ts"
+        "util.ts"
     ],
     "atom": {
         "rewriteTsconfig": true

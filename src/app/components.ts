@@ -1,4 +1,5 @@
 import trigger from './event';
+import loadSample from './loader';
 
 export class Component {
   context: any;
@@ -124,16 +125,11 @@ export class Sample extends Component {
   }
 
   load() {
-    let request = new XMLHttpRequest();
-    request.open('GET', 'samples/' + this.source + '.ogg', true);
-    request.responseType = 'arraybuffer';
-    request.onload = () => {
-      let audioData = request.response;
+    loadSample(this.source, (audioData) => {
       this.context.decodeAudioData(audioData, (buffer) => {
         this.buffer = buffer;
       }, () => {});
-    };
-    request.send();
+    });
   }
 
   gateOn(note) {
@@ -164,16 +160,40 @@ export class Reverb extends Component {
   }
 
   loadImpulse() {
-    let request = new XMLHttpRequest();
-    request.open('GET', 'samples/impulse/1.ogg', true);
-    request.responseType = 'arraybuffer';
-    request.onload = () => {
-      let audioData = request.response;
+    loadSample('impulse/1', (audioData) => {
       this.context.decodeAudioData(audioData, (buffer) => {
         this.soundSource.buffer = buffer;
         this.convolver.buffer = buffer;
       }, () => {});
-    };
-    request.send();
+    });
+  }
+}
+
+export class Delay extends Component {
+  delay: any;
+  tempo: number;
+  value: number;
+
+  constructor(context, name = 'Delay') {
+    super(context, name);
+    this.delay = context.createDelay();
+    this.value = 0.52;
+    this.setTempo(120);
+    this.input = this.delay;
+    this.output = this.delay;
+    this.addEvent('setTempo', (value) => { this.setTempo(value.detail); });
+    this.addEvent('setDelay', (value) => { this.setDelay(value.detail); });
+  }
+
+  setTempo(tempo) {
+    this.tempo = tempo;
+    let delayValue = this.value * 60.0 / tempo;
+    this.delay.delayTime.value = delayValue;
+  }
+
+  setDelay(value) {
+    this.value = value;
+    let delayValue = value * 60.0 / this.tempo;
+    this.delay.delayTime.value = delayValue;
   }
 }

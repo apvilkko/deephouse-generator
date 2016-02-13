@@ -1,5 +1,6 @@
 import trigger from './event';
 import {Mapper, maxValue} from './parametermapping';
+import config from './config';
 
 export class InputHandler {
   sliders: any;
@@ -28,11 +29,11 @@ export class InputHandler {
       slider.appendChild(label);
       sliders.appendChild(slider);
       input.addEventListener('input', value.callback, false);
-      var initialValue = value.initial || (maxValue / 2);
+      var initialValue = value.initial || (maxValue * 0.75);
       input.value = '' + initialValue;
       value.callback({target: {value: initialValue}});
     });
-    var button = document.getElementById('playpause');
+    let button = document.getElementById('playpause');
     button.addEventListener('click', () => {
       trigger('playpause');
     });
@@ -40,9 +41,38 @@ export class InputHandler {
     button.addEventListener('click', () => {
       trigger('another');
     });
-    var autoanother = document.getElementById('autoanother');
+    let autoanother = document.getElementById('autoanother');
+    autoanother['checked'] = true;
     autoanother.addEventListener('change', (value) => {
       trigger('autoanother', value.target['checked']);
+    });
+    let autotoggle = document.getElementById('autotoggle');
+    autotoggle['checked'] = true;
+    autotoggle.addEventListener('change', (value) => {
+      trigger('autotoggle', value.target['checked']);
+    });
+
+    let trackEl = document.getElementById('tracks');
+    config.names.forEach((name) => {
+      let button = document.createElement('button');
+      button.id = 'track_' + name;
+      let text = document.createTextNode(name);
+      button.appendChild(text);
+      trackEl.appendChild(button);
+      button.addEventListener('click', () => {
+        let btn = document.getElementById(button.id);
+        let muted = btn.className.indexOf('muted') > -1;
+        trigger((muted ? 'un' : '') + 'muteTrack', name);
+      });
+    });
+
+    document.addEventListener('muteTrack', (value: CustomEvent) => {
+      let button = document.getElementById('track_' + value.detail);
+      button.className = 'muted';
+    });
+    document.addEventListener('unmuteTrack', (value: CustomEvent) => {
+      let button = document.getElementById('track_' + value.detail);
+      button.className = '';
     });
   }
 }

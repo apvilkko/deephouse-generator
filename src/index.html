@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Venntaur's Deep House Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     html, body {
       margin: 0;
@@ -12,13 +13,17 @@
       padding: 2em;
     }
     button {
-      padding: 2em;
+      padding: 0.5em;
       background: #ccccdd;
       margin-bottom: 1em;
       font-family: monospace;
     }
-    #playpause {
-      padding: 0.5em;
+    .big {
+      padding: 2em;
+    }
+    .muted {
+      background: #eeeeff;
+      color: #999;
     }
     .slider label {
       display: inline-block;
@@ -35,17 +40,26 @@
       left: 1em;
       bottom: 1em;
     }
+    label {
+      display: block;
+    }
     label input {
       vertical-align: top;
+    }
+    #tracks {
+      margin-top: 1em;
     }
   </style>
 </head>
 <body>
   <h1>Venntaur's Deep House Generator</h1>
-  <button id="another">another</button>
+  <button class="big" id="another">another</button>
   <div id="sliders"></div>
   <button id="playpause">play/pause</button>
-  <br><label><input type="checkbox" id="autoanother"> auto-another</label>
+  <label><input type="checkbox" id="autoanother"> auto-another</label>
+  <label><input type="checkbox" id="autotoggle"> auto-toggle</label>
+  <div id="tracks"></div>
+
   <script src="dist/application.js"></script>
   <a href="https://github.com/apvilkko/deephouse-generator" target="_blank">source</a>
 </body>
